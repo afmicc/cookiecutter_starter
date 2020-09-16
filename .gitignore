@@ -274,3 +274,8 @@ cookiecutter_starter/media/
 
 .env
 .envs/*
+
+
+### Continuos Integration
+
+process.yml
