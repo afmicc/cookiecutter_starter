@@ -14,18 +14,18 @@ class UserChangeForm(admin_forms.UserChangeForm):
 class UserCreationForm(admin_forms.UserCreationForm):
 
     error_message = admin_forms.UserCreationForm.error_messages.update(
-        {"duplicate_username": _("This username has already been taken.")}
+        {'duplicate_username': _('This username has already been taken.')}
     )
 
     class Meta(admin_forms.UserCreationForm.Meta):
         model = User
 
     def clean_username(self):
-        username = self.cleaned_data["username"]
+        username = self.cleaned_data['username']
 
         try:
             User.objects.get(username=username)
         except User.DoesNotExist:
             return username
 
-        raise ValidationError(self.error_messages["duplicate_username"])
+        raise ValidationError(self.error_messages['duplicate_username'])
