@@ -1,0 +1,60 @@
+name: Python application
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:11.6-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - "5432:5432"
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Installing resources
+      run: |
+          apt-get --yes --force-yes update && apt-get --yes --force-yes install binutils libproj-dev gdal-bin
+          pip install pipenv
+
+    - name: Installing requirements
+      run: |
+        pipenv install -r ./requirements/local.txt
+
+    - name: Checking PEP8 code style
+      run: |
+        pipenv run flake8 --count
+
+    - name: Checking Black code formatter
+      run: |
+        pipenv run black . --check
+
+    - name: Running tests
+      run: |
+          pipenv run coverage run -m pytest --ds=config.settings.test
+
+    - name: Setup Code Climate test-reporter
+      run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+          ./cc-test-reporter before-build
+          pipenv run coverage report --fail-under=90 -m
+          pipenv run coverage xml
+          ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $?
