@@ -34,6 +34,15 @@ jobs:
           apt-get --yes --force-yes update && apt-get --yes --force-yes install binutils libproj-dev gdal-bin
           pip install pipenv
 
+    - name: Cache pipenv
+      uses: actions/cache@v2
+      with:
+        path: ~/.pipenv
+        key: ${{ runner.os }}-pipenv-${{ hashFiles('./requirements/base.txt','./requirements/local.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pipenv-
+          ${{ runner.os }}-
+
     - name: Installing requirements
       run: |
         pipenv install -r ./requirements/local.txt
