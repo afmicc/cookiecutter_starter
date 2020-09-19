@@ -18,6 +18,11 @@ jobs:
             . venv/bin/activate
             pip install --upgrade pip==20.0.2
 
+      - restore_cache:
+          keys:
+            - venv-requirements-{{ checksum "./requirements/base.txt" }}-{{ checksum "./requirements/local.txt" }}
+            - venv-requirements-
+
       - run:
           name: Installing pip requirements
           command: |
@@ -47,6 +52,11 @@ jobs:
           command: |
             . venv/bin/activate
             coverage run -m pytest --ds=config.settings.test
+
+      - save_cache:
+          key: venv-requirements-{{ checksum "./requirements/base.txt" }}-{{ checksum "./requirements/local.txt" }}
+          paths:
+            - ".venv"
 
       - run:
           name: Checking coverage
