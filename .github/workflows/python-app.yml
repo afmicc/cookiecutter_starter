@@ -29,37 +29,48 @@ jobs:
       with:
         python-version: 3.8
 
-    - name: Installing resources
+    - name: Updating pip
       run: |
-          apt-get --yes --force-yes update && apt-get --yes --force-yes install binutils libproj-dev gdal-bin
-          pip install pipenv
+        python3 -m venv venv
+        . venv/bin/activate
+        pip install --upgrade pip==20.0.2
 
     - name: Cache pipenv
       uses: actions/cache@v2
+      id: cache-venv
       with:
-        path: ~/.pipenv
-        key: ${{ runner.os }}-pipenv-${{ hashFiles('./requirements/base.txt','./requirements/local.txt') }}
+        path: ./.venv
+        key: ${{ runner.os }}-venv-${{ hashFiles('./requirements/base.txt','./requirements/local.txt') }}
         restore-keys: |
-          ${{ runner.os }}-pipenv-
-          ${{ runner.os }}-
+          ${{ runner.os }}-venv-
 
     - name: Installing requirements
       run: |
-        pipenv install -r ./requirements/local.txt
+        python3 -m venv venv
+        . venv/bin/activate
+        pip install -r ./requirements/local.txt
+      # if: steps.cache-venv.outputs.cache-hit != 'true'
 
     - name: Checking PEP8 code style
       run: |
-        pipenv run flake8 --count
+        . venv/bin/activate
+        flake8 --count
 
     - name: Checking Black code formatter
       run: |
-        pipenv run black . --check
+        . venv/bin/activate
+        black . --check
 
     - name: Running tests
       run: |
-          pipenv run coverage run -m pytest --ds=config.settings.test
-          pipenv run coverage report --fail-under=90 -m
-          pipenv run coverage xml
+        . venv/bin/activate
+        coverage run -m pytest --ds=config.settings.test
+
+    - name: Checking coverage
+      run: |
+        . venv/bin/activate
+        coverage report --fail-under=90 -m
+        coverage xml
 
     - name: Setup Code Climate test-reporter
       run: |
