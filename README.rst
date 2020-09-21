@@ -10,6 +10,9 @@ This proyect is an example of how configure a Django proyect from the beginning
      :target: https://github.com/ambv/black
      :alt: Black code style
 
+.. image:: https://circleci.com/gh/afmicc/cookiecutter_starter.svg?style=shield
+    :target: https://circleci.com/gh/afmicc/cookiecutter_starter
+    :alt: Tests status
 
 :License: MIT
 
@@ -111,7 +114,3 @@ Heroku
 See detailed `cookiecutter-django Heroku documentation`_.
 
 .. _`cookiecutter-django Heroku documentation`: http://cookiecutter-django.readthedocs.io/en/latest/deployment-on-heroku.html
-
-
-
-
