@@ -14,6 +14,9 @@ This proyect is an example of how configure a Django proyect from the beginning
     :target: https://circleci.com/gh/afmicc/cookiecutter_starter
     :alt: Tests status
 
+.. image:: https://github.com/afmicc/cookiecutter_starter/workflows/Python%20application/badge.svg
+    :alt: Tests status
+
 :License: MIT
 
 
